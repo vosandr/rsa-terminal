@@ -6,32 +6,25 @@ const rl = readline.createInterface({
   output: process.stdout
 })
 
-const text = () => {
-  return new Promise((resolve) => {
-    rl.question('Enter text\n', (answer) => {
-      resolve()
-    })
-  })
-}
-
-const lengthKey = () => {
-  return new Promise((resolve) => {
-    rl.question("Enter key's length(must be a multiple of 8)\n", (answer) => {
-      resolve()
+const question = (question) => {
+  return new Promise((resolve, reject) => {
+    rl.question(question, (answer) => {
+      resolve(answer)
     })
   })
 }
 
 const main = async () => {
-    await text()
-    await lengthKey()
+  const text = await question('Enter text: ');
+  const lengthKey = await question("Enter encrypt's length (must be a multiple of 8): ");
 
-    const key = new NodeRSA({b: 1024});
-    const encrypted = key.encrypt(text, 'base64');
-    console.log('encrypted: ', encrypted);
-    const decrypted = key.decrypt(encrypted, 'utf8');
-    console.log('decrypted: ', decrypted);
-    rl.close()
+  const key = new NodeRSA({b: lengthKey});
+
+  const encrypted = key.encrypt(text, 'base64');
+  const decrypted = key.decrypt(encrypted, 'utf8');
+
+  console.log('decrypted: ', decrypted);
+  console.log('encrypted: ', encrypted);
+  rl.close()
 }
-
-main()
+main();
